@@ -1,12 +1,28 @@
 import { useList } from 'react-firebase-hooks/database';
-import { ref, update } from 'firebase/database';
-import { database } from '../firebase';
-import { useState } from 'react';
+import { ref, update, get } from 'firebase/database';
+import { database, auth } from '../firebase';
+import { useState, useEffect } from 'react';
 
 function ManagerDashboard() {
   const [snapshots, loading, error] = useList(ref(database, 'breakdowns'));
   const [technician, setTechnician] = useState('');
   const [fixDetails, setFixDetails] = useState('');
+  const [userRole, setUserRole] = useState(null);
+
+  // Fetch current user's role
+  useEffect(() => {
+    const fetchUserRole = async () => {
+      const user = auth.currentUser;
+      if (user) {
+        const userRef = ref(database, `users/${user.uid}`);
+        const snapshot = await get(userRef);
+        if (snapshot.exists()) {
+          setUserRole(snapshot.val().role);
+        }
+      }
+    };
+    fetchUserRole();
+  }, []);
 
   const updateStatus = async (reportId, newStatus) => {
     try {
@@ -16,7 +32,7 @@ function ManagerDashboard() {
       });
     } catch (err) {
       console.error('Error updating status:', err);
-      alert('Error updating status. Please try again.');
+      alert('Error updating status.');
     }
   };
 
@@ -35,7 +51,7 @@ function ManagerDashboard() {
       setTechnician('');
     } catch (err) {
       console.error('Error assigning technician:', err);
-      alert('Error assigning technician. Please try again.');
+      alert('Error assigning technician.');
     }
   };
 
@@ -54,44 +70,25 @@ function ManagerDashboard() {
       setFixDetails('');
     } catch (err) {
       console.error('Error completing report:', err);
-      alert('Error completing report. Please try again.');
+      alert('Error completing report.');
     }
   };
 
-  // Show loading state
-  if (loading) {
-    return <div className="loading">Loading reports...</div>;
-  }
-
-  // Show error if Firebase error occurred
-  if (error) {
-    return (
-      <div className="error-message">
-        <h3>Error loading reports</h3>
-        <p>{error.message}</p>
-        <p>Please check your Firebase connection and security rules.</p>
-      </div>
-    );
-  }
-
-  // Check if snapshots exists and has data
+  if (loading) return <div className="loading">Loading reports...</div>;
+  if (error) return <div className="error-message">Error: {error.message}</div>;
   if (!snapshots || snapshots.length === 0) {
-    return (
-      <div className="empty-state">
-        <h2>No Breakdown Reports</h2>
-        <p>No reports have been submitted yet.</p>
-      </div>
-    );
+    return <div className="empty-state"><h2>No Breakdown Reports</h2></div>;
   }
 
   return (
     <div>
-      <h2>All Breakdown Reports</h2>
+      <h2>
+        {userRole === 'manager' ? 'Manager Dashboard' : 'Technician Dashboard'}
+      </h2>
+      
       {snapshots.map((snapshot) => {
         const data = snapshot.val();
         const reportId = snapshot.key;
-        
-        // Safety check for data
         if (!data) return null;
         
         return (
@@ -100,7 +97,8 @@ function ManagerDashboard() {
             <p><strong>Issue:</strong> {data.message || 'No description'}</p>
             <p><strong>Status:</strong> {data.status || 'pending'}</p>
             
-            {data.status === 'pending' && (
+            {/* MANAGERS ONLY: Can approve and assign */}
+            {userRole === 'manager' && data.status === 'pending' && (
               <div>
                 <input
                   type="text"
@@ -117,6 +115,7 @@ function ManagerDashboard() {
               </div>
             )}
             
+            {/* BOTH MANAGERS AND TECHNICIANS: Can complete reports */}
             {data.status === 'approved' && (
               <div>
                 <p>Assigned to: {data.assignedTechnician}</p>
@@ -137,6 +136,13 @@ function ManagerDashboard() {
                 <p><strong>Resolution:</strong> {data.fixDetails || 'N/A'}</p>
                 <p>Completed by: {data.assignedTechnician || 'N/A'}</p>
               </div>
+            )}
+            
+            {/* TECHNICIANS: Show only if pending */}
+            {userRole === 'technician' && data.status === 'pending' && (
+              <p style={{ color: '#999', fontStyle: 'italic' }}>
+                Waiting for manager approval...
+              </p>
             )}
           </div>
         );
