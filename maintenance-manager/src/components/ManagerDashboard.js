@@ -7,48 +7,98 @@ function ManagerDashboard() {
   const [snapshots, loading, error] = useList(ref(database, 'breakdowns'));
   const [technician, setTechnician] = useState('');
   const [fixDetails, setFixDetails] = useState('');
-  // Removed: const [selectedReport, setSelectedReport] = useState(null);
 
   const updateStatus = async (reportId, newStatus) => {
-    await update(ref(database, `breakdowns/${reportId}`), {
-      status: newStatus,
-      'timestamps/updated': Date.now()
-    });
+    try {
+      await update(ref(database, `breakdowns/${reportId}`), {
+        status: newStatus,
+        'timestamps/updated': Date.now()
+      });
+    } catch (err) {
+      console.error('Error updating status:', err);
+      alert('Error updating status. Please try again.');
+    }
   };
 
   const assignTechnician = async (reportId) => {
-    await update(ref(database, `breakdowns/${reportId}`), {
-      assignedTechnician: technician,
-      status: 'approved',
-      'timestamps/updated': Date.now()
-    });
-    setTechnician('');
+    if (!technician.trim()) {
+      alert('Please enter a technician name');
+      return;
+    }
+    
+    try {
+      await update(ref(database, `breakdowns/${reportId}`), {
+        assignedTechnician: technician,
+        status: 'approved',
+        'timestamps/updated': Date.now()
+      });
+      setTechnician('');
+    } catch (err) {
+      console.error('Error assigning technician:', err);
+      alert('Error assigning technician. Please try again.');
+    }
   };
 
   const completeReport = async (reportId) => {
-    await update(ref(database, `breakdowns/${reportId}`), {
-      fixDetails: fixDetails,
-      status: 'completed',
-      'timestamps/updated': Date.now()
-    });
-    setFixDetails('');
+    if (!fixDetails.trim()) {
+      alert('Please enter fix details');
+      return;
+    }
+    
+    try {
+      await update(ref(database, `breakdowns/${reportId}`), {
+        fixDetails: fixDetails,
+        status: 'completed',
+        'timestamps/updated': Date.now()
+      });
+      setFixDetails('');
+    } catch (err) {
+      console.error('Error completing report:', err);
+      alert('Error completing report. Please try again.');
+    }
   };
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error.message}</p>;
+  // Show loading state
+  if (loading) {
+    return <div className="loading">Loading reports...</div>;
+  }
+
+  // Show error if Firebase error occurred
+  if (error) {
+    return (
+      <div className="error-message">
+        <h3>Error loading reports</h3>
+        <p>{error.message}</p>
+        <p>Please check your Firebase connection and security rules.</p>
+      </div>
+    );
+  }
+
+  // Check if snapshots exists and has data
+  if (!snapshots || snapshots.length === 0) {
+    return (
+      <div className="empty-state">
+        <h2>No Breakdown Reports</h2>
+        <p>No reports have been submitted yet.</p>
+      </div>
+    );
+  }
 
   return (
     <div>
       <h2>All Breakdown Reports</h2>
-      {snapshots && snapshots.map((snapshot) => {
+      {snapshots.map((snapshot) => {
         const data = snapshot.val();
         const reportId = snapshot.key;
         
+        // Safety check for data
+        if (!data) return null;
+        
         return (
-          <div key={reportId} className={`report-card ${data.status}`}>
-            <h3>Report from: {data.reporterName}</h3>
-            <p><strong>Issue:</strong> {data.message}</p>
-            <p><strong>Status:</strong> {data.status}</p>
+          <div key={reportId} className={`report-card ${data.status || 'pending'}`}>
+            <h3>Report from: {data.reporterName || 'Unknown'}</h3>
+            <p><strong>Issue:</strong> {data.message || 'No description'}</p>
+            <p><strong>Status:</strong> {data.status || 'pending'}</p>
             
             {data.status === 'pending' && (
               <div>
@@ -74,6 +124,7 @@ function ManagerDashboard() {
                   placeholder="Enter fix details"
                   value={fixDetails}
                   onChange={(e) => setFixDetails(e.target.value)}
+                  rows="3"
                 />
                 <button onClick={() => completeReport(reportId)}>
                   Mark as Completed
@@ -83,8 +134,8 @@ function ManagerDashboard() {
             
             {data.status === 'completed' && (
               <div>
-                <p><strong>Resolution:</strong> {data.fixDetails}</p>
-                <p>Completed by: {data.assignedTechnician}</p>
+                <p><strong>Resolution:</strong> {data.fixDetails || 'N/A'}</p>
+                <p>Completed by: {data.assignedTechnician || 'N/A'}</p>
               </div>
             )}
           </div>

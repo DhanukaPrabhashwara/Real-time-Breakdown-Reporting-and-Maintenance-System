@@ -7,7 +7,6 @@ function ReportBreakdown() {
   const [userName, setUserName] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Fetch user's name from database when component loads
   useEffect(() => {
     const fetchUserName = async () => {
       const user = auth.currentUser;
@@ -64,7 +63,7 @@ function ReportBreakdown() {
 
   return (
     <div className="report-breakdown-container">
-      <h2>Report a Breakdown</h2>
+      {/* REMOVED: <h2>Report a Breakdown</h2> */}
       <form onSubmit={submitReport}>
         <div className="user-info">
           <label>Your Name: {userName}</label>

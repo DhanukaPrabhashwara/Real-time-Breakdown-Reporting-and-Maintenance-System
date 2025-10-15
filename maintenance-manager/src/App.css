@@ -1,14 +1,120 @@
-/* Inherits most styles from Reporter App, with these additions: */
+/* ===================================
+   GLOBAL STYLES
+   =================================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-/* Manager Dashboard Specific */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+}
+
+.App {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* ===================================
+   HEADER STYLES
+   =================================== */
+header {
+  background: white;
+  padding: 20px 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+header h1 {
+  color: #667eea;
+  font-size: 28px;
+}
+
+.user-info {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.user-info span {
+  color: #555;
+  font-weight: 500;
+}
+
+/* ===================================
+   BUTTON STYLES
+   =================================== */
+button {
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+header button {
+  background-color: #dc3545;
+  color: white;
+}
+
+header button:hover {
+  background-color: #c82333;
+}
+
+/* ===================================
+   MAIN CONTENT
+   =================================== */
+main {
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+main h2 {
+  color: #333;
+  margin-bottom: 25px;
+  font-size: 26px;
+  border-bottom: 3px solid #667eea;
+  padding-bottom: 12px;
+}
+
+/* ===================================
+   REPORT CARDS - MANAGER DASHBOARD
+   =================================== */
 .report-card {
   background: white;
   padding: 25px;
   border-radius: 8px;
   margin-bottom: 20px;
   border: 2px solid #e0e0e0;
+  border-left: 6px solid #ccc;
   transition: all 0.3s ease;
-  cursor: pointer;
 }
 
 .report-card:hover {
@@ -17,38 +123,78 @@
   transform: translateY(-3px);
 }
 
+/* Status-based border colors */
 .report-card.pending {
-  border-left: 6px solid #ffc107;
+  border-left-color: #ffc107;
+  background: #fffef7;
 }
 
 .report-card.approved {
-  border-left: 6px solid #17a2b8;
+  border-left-color: #17a2b8;
+  background: #f7fdff;
 }
 
 .report-card.completed {
-  border-left: 6px solid #28a745;
+  border-left-color: #28a745;
+  background: #f7fff7;
 }
 
-/* Action Buttons */
+.report-card.rejected {
+  border-left-color: #dc3545;
+  background: #fff7f7;
+}
+
+/* Report card content */
+.report-card h3 {
+  color: #333;
+  margin-bottom: 15px;
+  font-size: 20px;
+}
+
+.report-card p {
+  color: #666;
+  margin: 10px 0;
+  line-height: 1.6;
+}
+
+.report-card strong {
+  color: #333;
+  font-weight: 600;
+}
+
+/* ===================================
+   FORM INPUTS IN REPORT CARDS
+   =================================== */
 .report-card input,
 .report-card textarea {
   width: 100%;
-  padding: 10px;
-  margin: 10px 0;
+  padding: 12px;
+  margin: 12px 0;
   border: 2px solid #e0e0e0;
   border-radius: 6px;
   font-size: 14px;
+  font-family: inherit;
+  transition: border-color 0.3s ease;
 }
 
 .report-card input:focus,
 .report-card textarea:focus {
   outline: none;
   border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
+.report-card textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* ===================================
+   ACTION BUTTONS IN REPORT CARDS
+   =================================== */
 .report-card button {
   margin-right: 10px;
-  margin-top: 10px;
+  margin-top: 12px;
   padding: 10px 20px;
   font-size: 14px;
 }
@@ -58,20 +204,22 @@
   color: white;
 }
 
-.report-card button:first-of-type:hover {
+.report-card button:first-of-type:hover:not(:disabled) {
   background-color: #218838;
 }
 
-.report-card button:last-of-type {
+.report-card button:nth-of-type(2) {
   background-color: #dc3545;
   color: white;
 }
 
-.report-card button:last-of-type:hover {
+.report-card button:nth-of-type(2):hover:not(:disabled) {
   background-color: #c82333;
 }
 
-/* Badge for status */
+/* ===================================
+   STATUS BADGES
+   =================================== */
 .badge {
   display: inline-block;
   padding: 6px 14px;
@@ -80,19 +228,227 @@
   font-weight: 600;
   text-transform: uppercase;
   margin-top: 10px;
+  letter-spacing: 0.5px;
 }
 
 .badge.pending {
   background-color: #fff3cd;
   color: #856404;
+  border: 1px solid #ffc107;
 }
 
 .badge.approved {
   background-color: #d1ecf1;
   color: #0c5460;
+  border: 1px solid #17a2b8;
 }
 
 .badge.completed {
   background-color: #d4edda;
   color: #155724;
+  border: 1px solid #28a745;
+}
+
+.badge.rejected {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #dc3545;
+}
+
+/* ===================================
+   LOADING STATE
+   =================================== */
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 24px;
+  color: white;
+  font-weight: 600;
+}
+
+/* Animated loading spinner (optional) */
+.loading::after {
+  content: '';
+  width: 40px;
+  height: 40px;
+  margin-left: 20px;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ===================================
+   ERROR MESSAGE
+   =================================== */
+.error-message {
+  background: #ffe6e6;
+  border: 2px solid #dc3545;
+  border-radius: 8px;
+  padding: 40px;
+  text-align: center;
+  color: #dc3545;
+  margin: 50px 0;
+}
+
+.error-message h3 {
+  margin-bottom: 15px;
+  font-size: 24px;
+}
+
+.error-message p {
+  margin: 10px 0;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* ===================================
+   EMPTY STATE
+   =================================== */
+.empty-state {
+  text-align: center;
+  padding: 80px 20px;
+  color: #999;
+}
+
+.empty-state h2 {
+  color: #666;
+  margin-bottom: 15px;
+  font-size: 28px;
+}
+
+.empty-state p {
+  font-size: 16px;
+  color: #999;
+}
+
+/* ===================================
+   TIMESTAMP DISPLAY
+   =================================== */
+.timestamp {
+  font-size: 12px;
+  color: #999;
+  margin-top: 15px;
+  display: block;
+  font-style: italic;
+}
+
+/* ===================================
+   SECTION DIVIDERS
+   =================================== */
+.report-card > div {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.report-card > div:first-child {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+
+/* ===================================
+   RESPONSIVE DESIGN
+   =================================== */
+@media (max-width: 768px) {
+  header {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+
+  header h1 {
+    font-size: 22px;
+  }
+
+  .user-info {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  main {
+    padding: 20px;
+  }
+
+  main h2 {
+    font-size: 22px;
+  }
+
+  .report-card {
+    padding: 20px;
+  }
+
+  .report-card h3 {
+    font-size: 18px;
+  }
+
+  .report-card button {
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .App {
+    padding: 10px;
+  }
+
+  header {
+    padding: 15px;
+  }
+
+  header h1 {
+    font-size: 20px;
+  }
+
+  main {
+    padding: 15px;
+  }
+
+  .report-card {
+    padding: 15px;
+  }
+}
+
+/* ===================================
+   UTILITY CLASSES
+   =================================== */
+.text-center {
+  text-align: center;
+}
+
+.mt-20 {
+  margin-top: 20px;
+}
+
+.mb-20 {
+  margin-bottom: 20px;
+}
+
+/* ===================================
+   PRINT STYLES
+   =================================== */
+@media print {
+  body {
+    background: white;
+  }
+
+  header button,
+  .report-card button,
+  .report-card input,
+  .report-card textarea {
+    display: none;
+  }
+
+  .report-card {
+    page-break-inside: avoid;
+  }
 }
