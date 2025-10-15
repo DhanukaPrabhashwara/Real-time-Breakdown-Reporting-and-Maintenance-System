@@ -5,9 +5,9 @@ import { useState } from 'react';
 
 function ManagerDashboard() {
   const [snapshots, loading, error] = useList(ref(database, 'breakdowns'));
-  const [selectedReport, setSelectedReport] = useState(null);
   const [technician, setTechnician] = useState('');
   const [fixDetails, setFixDetails] = useState('');
+  // Removed: const [selectedReport, setSelectedReport] = useState(null);
 
   const updateStatus = async (reportId, newStatus) => {
     await update(ref(database, `breakdowns/${reportId}`), {
@@ -93,3 +93,5 @@ function ManagerDashboard() {
     </div>
   );
 }
+
+export default ManagerDashboard;

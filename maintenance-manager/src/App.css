@@ -1,49 +1,98 @@
-.App {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-  font-family: Arial, sans-serif;
-}
+/* Inherits most styles from Reporter App, with these additions: */
 
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 2px solid #333;
-  padding-bottom: 20px;
-  margin-bottom: 30px;
-}
-
-.user-info {
-  display: flex;
-  gap: 15px;
-  align-items: center;
-}
-
-button {
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
+/* Manager Dashboard Specific */
+.report-card {
+  background: white;
+  padding: 25px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border: 2px solid #e0e0e0;
+  transition: all 0.3s ease;
   cursor: pointer;
 }
 
-button:hover {
-  background-color: #0056b3;
+.report-card:hover {
+  border-color: #667eea;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-3px);
 }
 
-.report-section, .reports-section {
-  margin: 30px 0;
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+.report-card.pending {
+  border-left: 6px solid #ffc107;
 }
 
-.loading {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  font-size: 24px;
+.report-card.approved {
+  border-left: 6px solid #17a2b8;
+}
+
+.report-card.completed {
+  border-left: 6px solid #28a745;
+}
+
+/* Action Buttons */
+.report-card input,
+.report-card textarea {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.report-card input:focus,
+.report-card textarea:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.report-card button {
+  margin-right: 10px;
+  margin-top: 10px;
+  padding: 10px 20px;
+  font-size: 14px;
+}
+
+.report-card button:first-of-type {
+  background-color: #28a745;
+  color: white;
+}
+
+.report-card button:first-of-type:hover {
+  background-color: #218838;
+}
+
+.report-card button:last-of-type {
+  background-color: #dc3545;
+  color: white;
+}
+
+.report-card button:last-of-type:hover {
+  background-color: #c82333;
+}
+
+/* Badge for status */
+.badge {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-top: 10px;
+}
+
+.badge.pending {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.badge.approved {
+  background-color: #d1ecf1;
+  color: #0c5460;
+}
+
+.badge.completed {
+  background-color: #d4edda;
+  color: #155724;
 }

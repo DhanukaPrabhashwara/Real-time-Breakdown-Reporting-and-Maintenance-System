@@ -55,3 +55,5 @@ function Auth() {
     </form>
   );
 }
+
+export default Auth;

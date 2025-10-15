@@ -33,3 +33,5 @@ function MyReports() {
     </div>
   );
 }
+
+export default MyReports;
