@@ -1,0 +1,98 @@
+.auth-container {
+  max-width: 400px;
+  margin: 100px auto;
+  background: white;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.auth-container h2 {
+  text-align: center;
+  color: #667eea;
+  margin-bottom: 30px;
+  font-size: 28px;
+}
+
+.auth-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.auth-container form > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-container input,
+.auth-container select {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  transition: border-color 0.3s ease;
+  font-family: inherit;
+}
+
+.auth-container input:focus,
+.auth-container select:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.auth-container button {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.auth-container button[type="submit"] {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.auth-container button[type="submit"]:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.auth-container button[type="button"] {
+  background: transparent;
+  color: #667eea;
+  border: 2px solid #667eea;
+}
+
+.auth-container button[type="button"]:hover {
+  background: #667eea;
+  color: white;
+}
+
+.auth-container button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.error {
+  color: #dc3545;
+  background: #ffe6e6;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #dc3545;
+  margin-bottom: 15px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.auth-container label {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 5px;
+}
