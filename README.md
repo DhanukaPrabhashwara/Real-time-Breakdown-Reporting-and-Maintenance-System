@@ -6,7 +6,6 @@ A React-based breakdown reporting and maintenance management system with Firebas
 
 - Node.js (v14+)
 - npm
-- Firebase account
 
 ## Installation
 
