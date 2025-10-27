@@ -18,7 +18,7 @@ function MyReports() {
   return (
     <div>
       <h2>My Reports</h2>
-      {snapshots && snapshots.map((snapshot) => {
+      {snapshots && snapshots.slice().reverse().map((snapshot) => {
         const data = snapshot.val();
         return (
           <div key={snapshot.key} className={`report ${data.status}`}>

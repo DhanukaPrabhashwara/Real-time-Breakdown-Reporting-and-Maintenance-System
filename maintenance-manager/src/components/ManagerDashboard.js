@@ -188,7 +188,7 @@ function ManagerDashboard() {
         </p>
       )}
       
-      {snapshots.map((snapshot) => {
+      {snapshots.slice().reverse().map((snapshot) => {
         const data = snapshot.val();
         const reportId = snapshot.key;
         if (!data) return null;
