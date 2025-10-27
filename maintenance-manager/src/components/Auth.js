@@ -110,7 +110,7 @@ function Auth() {
         <div>
           <input 
             type="password" 
-            placeholder="Password (min 6 characters)" 
+            placeholder="Password" 
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
