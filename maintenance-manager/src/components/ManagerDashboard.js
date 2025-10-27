@@ -2,6 +2,7 @@ import { useList } from 'react-firebase-hooks/database';
 import { ref, update, get, onValue } from 'firebase/database';
 import { database, auth } from '../firebase';
 import { useState, useEffect } from 'react';
+import emailjs from '@emailjs/browser';
 
 function ManagerDashboard() {
   const [snapshots, loading, error] = useList(ref(database, 'breakdowns'));
@@ -9,6 +10,11 @@ function ManagerDashboard() {
   const [technicians, setTechnicians] = useState([]);
   const [fixDetails, setFixDetails] = useState('');
   const [userRole, setUserRole] = useState(null);
+
+  // Initialize EmailJS
+  useEffect(() => {
+    emailjs.init('HC7CV7YTolpcpZB4r');
+  }, []);
 
   // Fetch current user's role
   useEffect(() => {
@@ -29,13 +35,11 @@ function ManagerDashboard() {
   useEffect(() => {
     const usersRef = ref(database, 'users');
     
-    // Set up real-time listener
     const unsubscribe = onValue(usersRef, (snapshot) => {
       if (snapshot.exists()) {
         const allUsers = snapshot.val();
         const techList = [];
         
-        // Filter users with 'technician' role
         Object.keys(allUsers).forEach(uid => {
           const user = allUsers[uid];
           if (user.role === 'technician') {
@@ -47,7 +51,7 @@ function ManagerDashboard() {
           }
         });
         
-        console.log('Technicians loaded:', techList); // Debug log
+        console.log('Technicians loaded:', techList);
         setTechnicians(techList);
       } else {
         setTechnicians([]);
@@ -56,9 +60,35 @@ function ManagerDashboard() {
       console.error('Error fetching technicians:', error);
     });
 
-    // Cleanup function
     return () => unsubscribe();
   }, []);
+
+  // Send email notification to technician
+  const sendEmailNotification = async (techEmail, techName, reportData) => {
+    try {
+      const templateParams = {
+        technician_name: techName,
+        technician_email: techEmail,
+        issue_summary: reportData.message.substring(0, 50) + '...',
+        issue_description: reportData.message,
+        reporter_name: reportData.reporterName,
+        status: 'Approved - Assigned to you',
+        assigned_date: new Date().toLocaleString()
+      };
+
+      const result = await emailjs.send(
+        'service_ofjwiu4',    //EmailJS Service ID
+        'template_ss4u6f1',   //EmailJS Template ID
+        templateParams
+      );
+
+      console.log('✅ Email sent successfully:', result);
+      return true;
+    } catch (error) {
+      console.error('❌ Email send failed:', error);
+      return false;
+    }
+  };
 
   const updateStatus = async (reportId, newStatus) => {
     try {
@@ -80,15 +110,34 @@ function ManagerDashboard() {
     
     const techDetails = technicians.find(t => t.uid === selectedTechnician);
     
+    // Get current report data for email
+    const reportRef = ref(database, `breakdowns/${reportId}`);
+    const reportSnapshot = await get(reportRef);
+    const reportData = reportSnapshot.val();
+    
     try {
+      // Update database
       await update(ref(database, `breakdowns/${reportId}`), {
         assignedTechnician: techDetails.name,
         assignedTechnicianUid: selectedTechnician,
         status: 'approved',
         'timestamps/updated': Date.now()
       });
+
+      // Send email notification
+      const emailSent = await sendEmailNotification(
+        techDetails.email,
+        techDetails.name,
+        reportData
+      );
+
       setSelectedTechnician('');
-      alert(`Report assigned to ${techDetails.name}`);
+
+      if (emailSent) {
+        alert(`✅ Report assigned to ${techDetails.name}\n📧 Email notification sent successfully!`);
+      } else {
+        alert(`✅ Report assigned to ${techDetails.name}\n⚠️ Email notification failed (check console for details)`);
+      }
     } catch (err) {
       console.error('Error assigning technician:', err);
       alert('Error assigning technician.');
@@ -184,10 +233,10 @@ function ManagerDashboard() {
                 </select>
                 
                 <button onClick={() => assignTechnician(reportId)}>
-                  Approve & Assign
+                  ✓ Approve & Assign (+ Send Email)
                 </button>
                 <button onClick={() => updateStatus(reportId, 'rejected')}>
-                  Reject
+                  ✗ Reject
                 </button>
                 
                 {technicians.length === 0 && (
