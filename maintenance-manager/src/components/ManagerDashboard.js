@@ -233,7 +233,7 @@ function ManagerDashboard() {
                 </select>
                 
                 <button onClick={() => assignTechnician(reportId)}>
-                  ✓ Approve & Assign (+ Send Email)
+                  ✓ Approve & Assign
                 </button>
                 <button onClick={() => updateStatus(reportId, 'rejected')}>
                   ✗ Reject
